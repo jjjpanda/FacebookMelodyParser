@@ -31,7 +31,7 @@ app.post('/webhook', (req, res) => {
         request({
           method: 'post',
           url: "https://graph.facebook.com/v7.0/me/messages?access_token="+pageToken,
-          body: {
+          body: JSON.stringify({
             messaging_type: "RESPONSE",
             recipient: {
               id: webhook_event.sender.id
@@ -39,7 +39,7 @@ app.post('/webhook', (req, res) => {
             message: {
               "text": "Hi. I'm not a finished AI yet. 😎 Leave me alone."
             }
-          },
+          }),
           headers: {
             "Content-Type": `application/json`,
           },
