@@ -5,11 +5,13 @@ const env = require('dotenv').config();
 const
 express = require('express'),
 bodyParser = require('body-parser'),
+request = require('request'),
 app = express().use(bodyParser.json()); // creates express http server
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
+const pageToken = process.env.pageToken
 
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
@@ -26,6 +28,27 @@ app.post('/webhook', (req, res) => {
         // will only ever contain one message, so we get index 0
         let webhook_event = entry.messaging[0];
         console.log(webhook_event);
+        request({
+          method: 'post',
+          url: "https://graph.facebook.com/v7.0/me/messages?access_token="+pageToken,
+          body: {
+            messaging_type: "RESPONSE",
+            recipient: {
+              id: webhook_event.sender.id
+            },
+            message: {
+              "text": "Hi. I'm not a finished AI yet. 😎 Leave me alone."
+            }
+          },
+          headers: {
+            "Content-Type": `application/json`,
+          },
+        }, (error, response, body) => {
+          if (!error && response.statusCode === 200) {
+            
+          } else {
+            
+          }
       });
   
       // Returns a '200 OK' response to all requests
