@@ -5,15 +5,14 @@ const env = require('dotenv').config();
 const
 express = require('express'),
 bodyParser = require('body-parser'),
-request = require('request'),
 fs = require('fs'),
 path = require('path'),
+analyze = require('./analyze.js'),
 app = express().use(bodyParser.json()); // creates express http server
 
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
-const pageToken = process.env.pageToken
 const dir = "./jsons"
 if (!fs.existsSync(path.join("./", dir))){
     fs.mkdirSync(path.join("./", dir));
@@ -25,41 +24,19 @@ app.use("/jsons", express.static(__dirname + '/jsons'))
 app.post('/webhook', (req, res) => {  
  
     let body = req.body;
-  
     // Checks this is an event from a page subscription
     if (body.object === 'page') {
   
+    
       // Iterates over each entry - there may be multiple if batched
       body.entry.forEach(function(entry) {
   
         // Gets the message. entry.messaging is an array, but 
         // will only ever contain one message, so we get index 0
         let webhook_event = entry.messaging[0];
-        console.log(webhook_event);
-        console.log(`./jsons/${webhook_event.message.mid}.json`)
-        fs.writeFileSync(`./jsons/${webhook_event.message.mid}.json`, JSON.stringify(webhook_event), 'utf8')
-        request({
-          method: 'post',
-          url: "https://graph.facebook.com/v7.0/me/messages?access_token="+pageToken,
-          body: JSON.stringify({
-            messaging_type: "RESPONSE",
-            recipient: {
-              id: webhook_event.sender.id
-            },
-            message: {
-              "text": "Hi. I'm not a finished AI yet. 😎 Leave me alone."
-            }
-          }),
-          headers: {
-            "Content-Type": `application/json`,
-          },
-        }, (error, response, body) => {
-          if (!error && response.statusCode === 200) {
-            
-          } else {
-            
-          }
-        });
+        
+        
+        analyze(webhook_event)
       })
       
       // Returns a '200 OK' response to all requests
