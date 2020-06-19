@@ -19,6 +19,8 @@ if (!fs.existsSync(path.join("./", dir))){
     fs.mkdirSync(path.join("./", dir));
 }
 
+app.use(express.static(__dirname + '/jsons'))
+
 // Creates the endpoint for our webhook 
 app.post('/webhook', (req, res) => {  
  
