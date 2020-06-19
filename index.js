@@ -37,7 +37,7 @@ app.post('/webhook', (req, res) => {
         let webhook_event = entry.messaging[0];
         console.log(webhook_event);
         console.log(`./jsons/${webhook_event.message.mid}.json`)
-        fs.writeFileSync(`./jsons/${webhook_event.message.mid}.json`, webhook_event, 'utf8')
+        fs.writeFileSync(`./jsons/${webhook_event.message.mid}.json`, JSON.stringify(webhook_event), 'utf8')
         request({
           method: 'post',
           url: "https://graph.facebook.com/v7.0/me/messages?access_token="+pageToken,
