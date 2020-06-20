@@ -13,9 +13,11 @@ app = express().use(bodyParser.json()); // creates express http server
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 
-const dir = "./jsons"
-if (!fs.existsSync(path.join("./", dir))){
-    fs.mkdirSync(path.join("./", dir));
+const dirs = ["./jsons", "./audio"]
+for( const dir of dirs ){
+  if (!fs.existsSync(path.join("./", dir))){
+      fs.mkdirSync(path.join("./", dir));
+  }
 }
 
 app.use("/jsons", express.static(__dirname + '/jsons'))
