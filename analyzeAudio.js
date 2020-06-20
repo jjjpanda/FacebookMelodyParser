@@ -23,12 +23,12 @@ module.exports = (audioUrl, id, callback) => {
         const decoded = WavDecoder.decode.sync(buffer); // get audio data from file using `wav-decoder`
         const float32Array = decoded.channelData[0]; // get a single channel of sound
         const detectPitch = YIN()
-        let fre = detectPitch(float32Array)
-        console.log(fre)
-        if(fre == null){
-            fre = 0;
+        let frequency = detectPitch(float32Array)
+        console.log(frequency)
+        if(frequency == null){
+            frequency = 0;
         }
-        callback(fre)
+        callback(frequency)
     })
     
     
