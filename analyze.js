@@ -7,8 +7,8 @@ module.exports = (webhook_event) => {
     
     if(webhook_event.message != undefined && webhook_event.message.attachments.length == 1){
         if(webhook_event.message.attachments[0].type == 'audio' && webhook_event.message.attachments[0].payload != undefined){
-            analyzeAudio(webhook_event.message.attachments[0].payload.url, (analyzedAudio) => {
-                respondTo(webhook_event)
+            analyzeAudio(webhook_event.message.attachments[0].payload.url, webhook_event.message.mid, (analyzedAudio) => {
+                respondTo(webhook_event, analyzedAudio)
             })
         }
     }

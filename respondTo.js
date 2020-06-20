@@ -1,7 +1,7 @@
 const request = require('request');
 const env = require('dotenv').config();
 const pageToken = process.env.pageToken
-module.exports = (webhook_event) => {
+module.exports = (webhook_event, info) => {
     request({
         method: 'post',
         url: "https://graph.facebook.com/v7.0/me/messages?access_token="+pageToken,
@@ -11,7 +11,7 @@ module.exports = (webhook_event) => {
             id: webhook_event.sender.id
           },
           message: {
-            "text": "Hi. I'm not a finished AI yet. 😎 Leave me alone."
+            "text": "Pitch guess: "+ info.toString()
           }
         }),
         headers: {
