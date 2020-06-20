@@ -5,11 +5,12 @@ const env = require('dotenv').config();
 const
 express = require('express'),
 bodyParser = require('body-parser'),
+fileUpload = require('express-fileupload'),
 fs = require('fs'),
 path = require('path'),
 analyze = require('./analyze.js'),
 app = express().use(bodyParser.json()); // creates express http server
-
+app.use(fileUpload());
 // Sets server port and logs message on success
 app.listen(process.env.PORT || 1337, () => console.log('webhook is listening'));
 

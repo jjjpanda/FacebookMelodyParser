@@ -6,6 +6,8 @@ const WavDecoder = require("wav-decoder");
 const Pitchfinder = require("pitchfinder");
 const {AMDF} = Pitchfinder
 const frequencies = Pitchfinder.default.frequencies
+const noteConversion = require('./noteConversion.js')
+const chartFreq = require('./chartFreq.js')
 const ffmpeg = require('fluent-ffmpeg');
 module.exports = (audioUrl, id, callback) => {
     console.log(audioUrl)
@@ -25,11 +27,16 @@ module.exports = (audioUrl, id, callback) => {
                 maxFrequency: "1500"
             })
             let detectedFreq = frequencies(detectPitch, float32Array, {
-                tempo: 130,
+                tempo: 360,
                 quantization: 4
             })
-            console.log(detectedFreq)
-            callback(detectedFreq)
+
+            const notes = noteConversion(detectedFreq)
+
+            const chart = chartFreq(notes, (image) => {
+                callback(image)
+            })
+
         })
         .run();
         

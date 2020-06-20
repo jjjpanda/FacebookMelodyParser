@@ -1,5 +1,6 @@
 const respondTo = require("./respondTo");
-const analyzeAudio = require('./analyzeAudio.js')
+const analyzeAudio = require('./analyzeAudio.js');
+const attachmentUpload = require("./attachmentUpload");
 module.exports = (webhook_event) => {
     console.log(webhook_event);
     //console.log(`./jsons/${webhook_event.message.mid}.json`)
@@ -7,9 +8,24 @@ module.exports = (webhook_event) => {
     
     if(webhook_event.message != undefined && webhook_event.message.attachments != undefined && webhook_event.message.attachments.length == 1){
         if(webhook_event.message.attachments[0].type == 'audio' && webhook_event.message.attachments[0].payload != undefined){
-            analyzeAudio(webhook_event.message.attachments[0].payload.url, webhook_event.message.mid, (analyzedAudio) => {
-                respondTo(webhook_event, {
-                    "text": "Pitch guess: "+ analyzedAudio.toString()
+            analyzeAudio(webhook_event.message.attachments[0].payload.url, webhook_event.message.mid, (buffer) => {
+                attachmentUpload(buffer, (err, id) => {
+                    console.log(id)
+                    if(err){
+                        respondTo(webhook_event, {
+                            "text": "Error",
+                        })
+                    }
+                    else{
+                        respondTo(webhook_event, {
+                            "attachment":{
+                                "type":"image", 
+                                "payload": {
+                                    "attachment_id": id
+                                }
+                            }
+                        })
+                    }
                 })
             })
         }
