@@ -7,7 +7,6 @@ const Pitchfinder = require("pitchfinder");
 const {YIN, frequencies} = Pitchfinder
 console.log(frequencies)
 const ffmpeg = require('fluent-ffmpeg');
-const { isNull } = require('util');
 module.exports = (audioUrl, id, callback) => {
     console.log(audioUrl)
 
