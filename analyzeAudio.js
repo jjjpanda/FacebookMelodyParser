@@ -4,16 +4,15 @@ const fs = require('fs')
 const stream = require('stream');
 const WavDecoder = require("wav-decoder");
 const Pitchfinder = require("pitchfinder");
-const {YIN, frequencies} = Pitchfinder
-console.log(frequencies)
+const {AMDF} = Pitchfinder
+const frequencies = Pitchfinder.default.frequencies
 const ffmpeg = require('fluent-ffmpeg');
 module.exports = (audioUrl, id, callback) => {
     console.log(audioUrl)
 
     var file = fs.createWriteStream(`./audio/${id}.mp4`)
     
-    var request = https.get(audioUrl, (response) => {
-        response.pipe(file)
+    file.on('finish', () => {
         ffmpeg()
         .input(`./audio/${id}.mp4`)
         .output(`./audio/${id}.wav`)
@@ -21,16 +20,23 @@ module.exports = (audioUrl, id, callback) => {
             const buffer = fs.readFileSync(`./audio/${id}.wav`);
             const decoded = WavDecoder.decode.sync(buffer); // get audio data from file using `wav-decoder`
             const float32Array = decoded.channelData[0]; // get a single channel of sound
-            const detectPitch = YIN()
-            let frequency = detectPitch(float32Array)
-            console.log(frequency)
-            if(frequency == null){
-                frequency = 0;
-            }
-            callback(frequency)
+            const detectPitch = AMDF({
+                minFrequency: "80",
+                maxFrequency: "1500"
+            })
+            let detectedFreq = frequencies(detectPitch, float32Array, {
+                tempo: 130,
+                quantization: 4
+            })
+            console.log(detectedFreq)
+            callback(detectedFreq)
         })
         .run();
         
+    })
+
+    var request = https.get(audioUrl, (response) => {
+        response.pipe(file)
     })
     
     
