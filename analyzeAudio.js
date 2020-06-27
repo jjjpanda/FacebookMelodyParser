@@ -13,6 +13,10 @@ module.exports = (audioUrl, id, callback) => {
     console.log(audioUrl)
 
     var file = fs.createWriteStream(`./audio/${id}.mp4`)
+
+    var deleteFile = () => {
+        fs.unlinkSync(`./audio/${id}.mp4`)
+    }
     
     file.on('finish', () => {
         ffmpeg()
@@ -34,7 +38,7 @@ module.exports = (audioUrl, id, callback) => {
             const notes = noteConversion(detectedFreq)
 
             const chart = chartFreq(notes, (image) => {
-                callback(image)
+                callback(image, deleteFile)
             })
 
         })
@@ -45,7 +49,6 @@ module.exports = (audioUrl, id, callback) => {
     var request = https.get(audioUrl, (response) => {
         response.pipe(file)
     })
-    
     
     
 }
