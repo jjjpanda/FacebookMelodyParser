@@ -8,13 +8,13 @@ module.exports = (webhook_event) => {
     
     if(webhook_event.message != undefined && webhook_event.message.attachments != undefined && webhook_event.message.attachments.length == 1){
         if(webhook_event.message.attachments[0].type == 'audio' && webhook_event.message.attachments[0].payload != undefined){
-            analyzeAudio(webhook_event.message.attachments[0].payload.url, webhook_event.message.mid, (buffer) => {
+            analyzeAudio(webhook_event.message.attachments[0].payload.url, webhook_event.message.mid, (buffer, deleteFile) => {
                 attachmentUpload(buffer, (err, id) => {
                     console.log(id)
                     if(err){
                         respondTo(webhook_event, {
                             "text": "Error",
-                        })
+                        }, deleteFile)
                     }
                     else{
                         respondTo(webhook_event, {
@@ -24,7 +24,7 @@ module.exports = (webhook_event) => {
                                     "attachment_id": id
                                 }
                             }
-                        })
+                        }, deleteFile)
                     }
                 })
             })

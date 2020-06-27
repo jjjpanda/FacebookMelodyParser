@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "startCont": "nodemon index.js"
+    "start": "npm build && node index.js",
+    "startCont": "npm build && nodemon index.js",
+    "build": "rm -rf /audio/* && rm -rf /jsons/*"
   },
   "author": "",
   "license": "ISC",
